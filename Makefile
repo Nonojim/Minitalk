@@ -27,11 +27,11 @@ $(NAME): server client
 
 server:	server.o
 		@make -C printf
-	$(CC) $(CCFLAGS) server.o printf/libftprintf.a printf/libft/libft.a -o server
+	$(CC) $(CCFLAGS) -g server.o printf/libftprintf.a printf/libft/libft.a -o server
 
 client:	client.o
 		@make -C printf
-	$(CC) $(CCFLAGS) client.o printf/libftprintf.a printf/libft/libft.a -o client
+	$(CC) $(CCFLAGS) -g client.o printf/libftprintf.a printf/libft/libft.a -o client
 # "%.o" rule compie .c file into corresponding .o file
 # "%" is a wildcard for "name of the files without extension"
 # $@ = target, here target = .o "$<" = first dependencies here = .c

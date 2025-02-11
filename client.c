@@ -35,15 +35,16 @@ void	send_signal(int PID, char* str)
 				kill(PID, SIGUSR1);
 			else if(bit == 1)
 				kill(PID, SIGUSR2);
-			usleep(50);
+			usleep(100);
 			write(1, &bit, 1);
 		}
 			j++;
 	}
-	while (i++ < 8)
+	i = 8;
+	while (i-- > 0)
 	{
 		kill(PID, SIGUSR1);
-		usleep(50);
+		usleep(100);
 	}
 }
 int	main(int argc, char *argv[])

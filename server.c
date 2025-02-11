@@ -26,30 +26,31 @@ char	*ft_strjoinchar(char *s1, char carac)
 {
 	char	*str;
 	size_t	i;
-	size_t	j;
 
 	i = 0;
-	j = 0;
 	str = ft_calloc((ft_strlen(s1) + 2), sizeof(char));
 	if (!str)
 		return (NULL);
 	while (s1[i])
-		str[j++] = s1[i++];
-	i = 0;
-	str[j++] = carac;
-	str[j] = '\0';
-	free(s1);
+	{
+		str[i] = s1[i];
+		i++;
+	}
+	str[i] = carac;
+	str[i + 1] = 0;
 	return (str);
 }
 
 void handle_signal(int signum)
 {
 	static char	*message;
-	static unsigned char	octet = 0;
+	static char	octet;
 	static int	i = 0;
 	if(!message)
 		message = ft_strdup("");
-	if (signum == SIGUSR2)
+	if (signum == SIGUSR1)
+		octet |= (0 << (7 - i));
+	else if (signum == SIGUSR2)
 		octet |= (1 << (7 - i));
 	i++;
 	if(i == 8)
@@ -57,7 +58,8 @@ void handle_signal(int signum)
 		message = ft_strjoinchar(message, octet);
 		if (!octet)
 		{
-			ft_printf("%s\n", message);
+			//ft_printf("%s\n", message);
+			ft_putstr_fd(message, 1);
 			free(message);
 			message = NULL;
 		}

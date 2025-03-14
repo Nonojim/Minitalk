@@ -31,15 +31,18 @@ char	*ft_strjoinchar(char *s1, char carac)
 	return (str);
 }
 
+void	send_confirmation(int cpid)
+{
+	kill(cpid, SIGINT);
+}
+
 void	handle_signal(int signum, siginfo_t *info, void *data)
 {
 	static char	*message;
 	static char	octet;
-	int			cpid;
 	static int	i = 0;
 
 	(void)data;
-	cpid = info->si_pid;
 	if (!message)
 		message = ft_strdup("");
 	if (signum == SIGUSR1)
@@ -55,7 +58,7 @@ void	handle_signal(int signum, siginfo_t *info, void *data)
 			ft_putstr_fd(message, 1);
 			free(message);
 			message = NULL;
-			kill(cpid, SIGINT);
+			send_confirmation(info->si_pid);
 		}
 		octet = 0;
 		i = 0;

@@ -16,6 +16,17 @@
 //{
 //	
 //}
+void	send_end_signal(int s_pid)
+{
+	int	i;
+
+	i = 8;
+	while (i-- > 0)
+	{
+		kill(s_pid, SIGUSR1);
+		usleep(4000);
+	}
+}
 
 void	send_signal(int s_pid, char *str)
 {
@@ -40,12 +51,7 @@ void	send_signal(int s_pid, char *str)
 		}
 		j++;
 	}
-	i = 8;
-	while (i-- > 0)
-	{
-		kill(s_pid, SIGUSR1);
-		usleep(4000);
-	}
+	send_end_signal(s_pid);
 }
 
 void	handle_signal(int signum)
@@ -57,27 +63,34 @@ void	handle_signal(int signum)
 		ft_putstr_fd("The signal is not supported.", 1);
 }
 
-int	main(int argc, char *argv[])
+int	check_usr_input(int narg, int s_pid, char c)
 {
-	struct sigaction	signalusr;
-	int					s_pid;
-
-	if (argc != 3)
+	if (narg != 3)
 	{
-		ft_printf("error !, follow example: ./client <s_pid> <message>\n");
+		ft_printf("Error !, follow example: ./client <s_pid> <message>\n");
 		return (0);
 	}
-	s_pid = ft_atoi(argv[1]);
 	if (!s_pid)
 	{
 		ft_printf("invalid pid \n");
 		return (0);
 	}
-	if (argv[2][0] == 0)
+	if (c == 0)
 	{
 		ft_printf("Empty message, no signal sent\n");
 		return (0);
 	}
+	return (1);
+}
+
+int	main(int argc, char *argv[])
+{
+	struct sigaction	signalusr;
+	int					s_pid;
+
+	s_pid = ft_atoi(argv[1]);
+	if (check_usr_input(argc, s_pid, argv[2][0]) == 0)
+		return (0);
 	signalusr.sa_handler = handle_signal;
 	signalusr.sa_flags = 0;
 	sigaction(SIGINT, &signalusr, NULL);

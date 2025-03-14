@@ -12,62 +12,77 @@
 
 #include "minitalk.h"
 
-//void sendsignal(int PID; char* message)
+//void sendsignal(int s_pid; char* message)
 //{
 //	
 //}
 
-void	send_signal(int PID, char* str)
+void	send_signal(int s_pid, char *str)
 {
-	int	i;
-	int	j;
-	unsigned char bit;
+	int				i;
+	int				j;
+	unsigned char	bit;
 
 	j = 0;
 	bit = 0;
-	while(str[j])
+	while (str[j])
 	{
 		i = 8;
 		while (i-- > 0)
 		{
 			bit = ((str[j] >> i) & 1);
-			if(bit == 0)
-				kill(PID, SIGUSR1);
-			else if(bit == 1)
-				kill(PID, SIGUSR2);
+			if (bit == 0)
+				kill(s_pid, SIGUSR1);
+			else if (bit == 1)
+				kill(s_pid, SIGUSR2);
 			usleep(4000);
 			write(1, &bit, 1);
 		}
-			j++;
+		j++;
 	}
 	i = 8;
 	while (i-- > 0)
 	{
-		kill(PID, SIGUSR1);
+		kill(s_pid, SIGUSR1);
 		usleep(4000);
 	}
 }
+
+void	handle_signal(int signum)
+{
+	ft_printf("The server got your message.\n");
+	if (signum == SIGINT)
+		exit(0);
+	else
+		ft_putstr_fd("The signal is not supported.", 1);
+}
+
 int	main(int argc, char *argv[])
 {
-	int PID;
+	struct sigaction	signalusr;
+	int					s_pid;
+
 	if (argc != 3)
 	{
-		ft_printf("3 necessary arguments, follow example: ./client <PID> <message>\n");
-		return(0);
+		ft_printf("error !, follow example: ./client <s_pid> <message>\n");
+		return (0);
 	}
-	PID = ft_atoi(argv[1]);
-	if (!PID)
+	s_pid = ft_atoi(argv[1]);
+	if (!s_pid)
 	{
-		ft_printf("invalid PID \n");
-		return(0);
+		ft_printf("invalid pid \n");
+		return (0);
 	}
 	if (argv[2][0] == 0)
 	{
 		ft_printf("Empty message, no signal sent\n");
-		return(0);
+		return (0);
 	}
-	ft_printf("sending: \"%s\" to server at PID: %d.\n", argv[2], PID);
-	send_signal(PID, argv[2]);
+	signalusr.sa_handler = handle_signal;
+	signalusr.sa_flags = 0;
+	sigaction(SIGINT, &signalusr, NULL);
+	ft_printf("sending: \"%s\" to server at pid: %d.\n", argv[2], s_pid);
+	send_signal(s_pid, argv[2]);
 	write(1, "\n", 1);
-	return(0);
+	return (0);
 }

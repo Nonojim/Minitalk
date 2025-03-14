@@ -12,16 +12,6 @@
 
 #include "minitalk.h"
 
-//struct sigaction {
-//	void     (*sa_handler)(int);
-//	void     (*sa_sigaction)(int, siginfo_t *, void *);
-//	sigset_t   sa_mask;
-//	int        sa_flags;
-//	void     (*sa_restorer)(void);
-//};           
-
-//int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
-
 char	*ft_strjoinchar(char *s1, char carac)
 {
 	char	*str;
@@ -41,43 +31,49 @@ char	*ft_strjoinchar(char *s1, char carac)
 	return (str);
 }
 
-void handle_signal(int signum)
+void	handle_signal(int signum, siginfo_t *info, void *data)
 {
 	static char	*message;
 	static char	octet;
+	int			cpid;
 	static int	i = 0;
-	if(!message)
+
+	(void)data;
+	cpid = info->si_pid;
+	if (!message)
 		message = ft_strdup("");
 	if (signum == SIGUSR1)
 		octet |= (0 << (7 - i));
 	else if (signum == SIGUSR2)
 		octet |= (1 << (7 - i));
 	i++;
-	if(i == 8)
+	if (i == 8)
 	{
 		message = ft_strjoinchar(message, octet);
 		if (!octet)
 		{
-			//ft_printf("%s\n", message);
 			ft_putstr_fd(message, 1);
 			free(message);
 			message = NULL;
+			kill(cpid, SIGINT);
 		}
 		octet = 0;
 		i = 0;
 	}
 }
+
+//sigemptyset is there to mask an invalid valgrind error
 int	main(void)
 {
-	struct	sigaction signalusr;
+	struct sigaction	signalusr;
 
-	signalusr.sa_handler = handle_signal;
-	signalusr.sa_flags = 0;
-	sigemptyset(&signalusr.sa_mask); //ne bloque rien mais cache erreur valgrind
+	signalusr.sa_sigaction = handle_signal;
+	signalusr.sa_flags = SA_SIGINFO;
+	sigemptyset(&signalusr.sa_mask);
 	sigaction(SIGUSR1, &signalusr, NULL);
 	sigaction(SIGUSR2, &signalusr, NULL);
 	ft_printf("Le PID de mon server est: %i\n", getpid());
-	while(1)
+	while (1)
 		pause();
-	return(0);
+	return (0);
 }

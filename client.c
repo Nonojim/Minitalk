@@ -12,10 +12,6 @@
 
 #include "minitalk.h"
 
-//void sendsignal(int s_pid; char* message)
-//{
-//	
-//}
 void	send_end_signal(int s_pid)
 {
 	int	i;

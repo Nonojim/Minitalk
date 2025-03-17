@@ -53,7 +53,7 @@ void	send_signal(int s_pid, char *str)
 void	handle_signal(int signum)
 {
 	ft_printf("The server got your message.\n");
-	if (signum == SIGINT)
+	if (signum == SIGUSR1)
 		exit(0);
 	else
 		ft_putstr_fd("The signal is not supported.", 1);
@@ -89,7 +89,7 @@ int	main(int argc, char *argv[])
 		return (0);
 	signalusr.sa_handler = handle_signal;
 	signalusr.sa_flags = 0;
-	sigaction(SIGINT, &signalusr, NULL);
+	sigaction(SIGUSR1, &signalusr, NULL);
 	ft_printf("sending: \"%s\" to server at pid: %d.\n", argv[2], s_pid);
 	send_signal(s_pid, argv[2]);
 	write(1, "\n", 1);

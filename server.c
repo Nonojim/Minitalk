@@ -33,7 +33,7 @@ char	*ft_strjoinchar(char *s1, char carac)
 
 void	send_confirmation(int cpid)
 {
-	kill(cpid, SIGINT);
+	kill(cpid, SIGUSR1);
 }
 
 void	handle_signal(int signum, siginfo_t *info, void *data)
@@ -65,7 +65,7 @@ void	handle_signal(int signum, siginfo_t *info, void *data)
 	}
 }
 
-//sigemptyset is there to mask an invalid valgrind error
+//sigemptyset is there to mask an invalid valgrind error 🦈
 int	main(void)
 {
 	struct sigaction	signalusr;

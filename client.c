@@ -84,14 +84,19 @@ int	main(int argc, char *argv[])
 	struct sigaction	signalusr;
 	int					s_pid;
 
-	s_pid = ft_atoi(argv[1]);
-	if (check_usr_input(argc, s_pid, argv[2][0]) == 0)
-		return (0);
-	signalusr.sa_handler = handle_signal;
-	signalusr.sa_flags = 0;
-	sigaction(SIGUSR1, &signalusr, NULL);
-	ft_printf("sending: \"%s\" to server at pid: %d.\n", argv[2], s_pid);
-	send_signal(s_pid, argv[2]);
-	write(1, "\n", 1);
+	if (argc > 2)
+	{
+		s_pid = ft_atoi(argv[1]);
+		if (check_usr_input(argc, s_pid, argv[2][0]) == 0)
+			return (0);
+		signalusr.sa_handler = handle_signal;
+		signalusr.sa_flags = 0;
+		sigaction(SIGUSR1, &signalusr, NULL);
+		ft_printf("sending: \"%s\" to server at pid: %d.\n", argv[2], s_pid);
+		send_signal(s_pid, argv[2]);
+		write(1, "\n", 1);
+	}
+	else
+		ft_printf("Error !, follow example: ./client <s_pid> <message>\n");
 	return (0);
 }

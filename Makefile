@@ -1,5 +1,5 @@
 #sources files
-SRC = server.c client.c
+SRC = server.c client.c checker.c
 #append .o to each .c files in the SRC
 #OBJS := $(SRC:%.c=%.o)
 OBJS = ${SRC:.c=.o}
@@ -29,9 +29,9 @@ server:	server.o
 		@make -C printf
 	$(CC) $(CCFLAGS) -g server.o printf/libftprintf.a printf/libft/libft.a -o server
 
-client:	client.o
+client:	client.o checker.o
 		@make -C printf
-	$(CC) $(CCFLAGS) -g client.o printf/libftprintf.a printf/libft/libft.a -o client
+	$(CC) $(CCFLAGS) -g client.o checker.o printf/libftprintf.a printf/libft/libft.a -o client
 # "%.o" rule compie .c file into corresponding .o file
 # "%" is a wildcard for "name of the files without extension"
 # $@ = target, here target = .o "$<" = first dependencies here = .c
